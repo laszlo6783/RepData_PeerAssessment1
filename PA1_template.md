@@ -33,11 +33,6 @@ tail(myData)
 ## 17567    NA 2012-11-30     2350
 ## 17568    NA 2012-11-30     2355
 ```
-We select the complete cases for further processing
-
-```r
-goodData<-complete.cases(myData$steps)
-```
 
 ## What is mean total number of steps taken per day?
 
@@ -73,7 +68,7 @@ abline(v = medianStep, lwd = 2, lty = 2,col=3)
 legend("topright", pch = "-", col = c("red", "green"), legend = c("mean", "median"))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
   
 Mean of the total steps
 
@@ -112,7 +107,7 @@ str(stepsOnTime)
 with(stepsOnTime,plot(interval/100,meanSteps,type="l",xlab="hours",ylab="Means of steps",main="Means of Steps in 2 month interval"))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
   
 The most "stepping" interval
 
@@ -136,5 +131,76 @@ maxInt/100
 ## Imputing missing values
 
 
+```r
+goodData<-complete.cases(myData$steps)
+```
+Number of rows NA
+
+```r
+nrow(myData[!goodData,])
+```
+
+```
+## [1] 2304
+```
+The strategy is to fill with the mean of the 5 minute interval, because is more probable  
+We recall from the activity pattern what we calculate, stepsOnTime  
+That is the mean of steps in the intervals of 5 minutes
+
+```r
+#stepsOnTime<-aggregate(myData$steps,by=list(myData$interval),FUN=mean,na.rm=TRUE)
+#names(stepsOnTime) <- c("interval", "meanSteps")
+```
+We merge the NA data with the average data. The common field is "interval"
+
+```r
+replacedData<-merge(myData[!goodData,],stepsOnTime)
+```
+We delete the extra column with NA values
+
+```r
+replacedData$steps<-NULL
+```
+Renaming the columns and reaggarange for binding
+
+```r
+names(replacedData) <- c("interval", "date","steps")
+replaced2<-replacedData[,c(3,2,1)]
+```
+Binding the good data and the replaced data
+
+```r
+myData2<-rbind(myData[goodData,],replaced2)
+```
+Now we recall the first diagram for the new dataset
+
+```r
+stepsPerDay2<-aggregate(myData2$steps, by=list(myData2$date), FUN=sum,na.rm=TRUE)
+names(stepsPerDay2) <- c("date", "sumSteps")
+hist(stepsPerDay2$sumSteps,xlab="steps", main="Total Steps in a day",breaks=10)
+meanStep2<-mean(stepsPerDay2$sumSteps)
+abline(v = meanStep2, lwd = 2, lty = 2,col=2)
+medianStep2<-median(stepsPerDay2$sumSteps)
+abline(v = medianStep2, lwd = 2, lty = 2,col=3)
+legend("topright", pch = "-", col = c("red", "green"), legend = c("mean", "median"))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-16-1.png) 
+
+```r
+meanStep2
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+medianStep2
+```
+
+```
+## [1] 10766.19
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?

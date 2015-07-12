@@ -14,11 +14,6 @@ myData<-read.csv("activity.csv",header=TRUE)
 head(myData)
 tail(myData)
 ```
-We select the complete cases for further processing
-```{r}
-goodData<-complete.cases(myData$steps)
-
-```
 
 ## What is mean total number of steps taken per day?
 
@@ -67,6 +62,49 @@ maxInt/100
 ```
 ## Imputing missing values
 
-
+```{r}
+goodData<-complete.cases(myData$steps)
+```
+Number of rows NA
+```{r}
+nrow(myData[!goodData,])
+```
+The strategy is to fill with the mean of the 5 minute interval, because is more probable  
+We recall from the activity pattern what we calculate, stepsOnTime  
+That is the mean of steps in the intervals of 5 minutes
+```{r}
+#stepsOnTime<-aggregate(myData$steps,by=list(myData$interval),FUN=mean,na.rm=TRUE)
+#names(stepsOnTime) <- c("interval", "meanSteps")
+```
+We merge the NA data with the average data. The common field is "interval"
+```{r}
+replacedData<-merge(myData[!goodData,],stepsOnTime)
+```
+We delete the extra column with NA values
+```{r}
+replacedData$steps<-NULL
+```
+Renaming the columns and reaggarange for binding
+```{r}
+names(replacedData) <- c("interval", "date","steps")
+replaced2<-replacedData[,c(3,2,1)]
+```
+Binding the good data and the replaced data
+```{r}
+myData2<-rbind(myData[goodData,],replaced2)
+```
+Now we recall the first diagram for the new dataset
+```{r}
+stepsPerDay2<-aggregate(myData2$steps, by=list(myData2$date), FUN=sum,na.rm=TRUE)
+names(stepsPerDay2) <- c("date", "sumSteps")
+hist(stepsPerDay2$sumSteps,xlab="steps", main="Total Steps in a day",breaks=10)
+meanStep2<-mean(stepsPerDay2$sumSteps)
+abline(v = meanStep2, lwd = 2, lty = 2,col=2)
+medianStep2<-median(stepsPerDay2$sumSteps)
+abline(v = medianStep2, lwd = 2, lty = 2,col=3)
+legend("topright", pch = "-", col = c("red", "green"), legend = c("mean", "median"))
+meanStep2
+medianStep2
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
