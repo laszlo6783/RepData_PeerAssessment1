@@ -96,7 +96,43 @@ medianStep
 ## What is the average daily activity pattern?
 
 
+```r
+stepsOnTime<-aggregate(myData$steps,by=list(myData$interval),FUN=mean,na.rm=TRUE)
+names(stepsOnTime) <- c("interval", "meanSteps")
+str(stepsOnTime)
+```
 
+```
+## 'data.frame':	288 obs. of  2 variables:
+##  $ interval : int  0 5 10 15 20 25 30 35 40 45 ...
+##  $ meanSteps: num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+```
+
+```r
+with(stepsOnTime,plot(interval/100,meanSteps,type="l",xlab="hours",ylab="Means of steps",main="Means of Steps in 2 month interval"))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+  
+The most "stepping" interval
+
+```r
+maxInt<-(subset(stepsOnTime,stepsOnTime$meanSteps==max(stepsOnTime$meanSteps)))$interval
+maxInt
+```
+
+```
+## [1] 835
+```
+Interval in hours
+
+```r
+maxInt/100
+```
+
+```
+## [1] 8.35
+```
 ## Imputing missing values
 
 
