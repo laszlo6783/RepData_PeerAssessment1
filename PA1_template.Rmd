@@ -8,11 +8,31 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r}
+unzip("activity.zip")
+myData<-read.csv("activity.csv",header=TRUE)
+head(myData)
+tail(myData)
+```
+We select the complete cases for further processing
+```{r}
+goodData<-complete.cases(myData$steps)
 
+```
 
 ## What is mean total number of steps taken per day?
 
-
+Summarize the steps by the date  
+We exclude the values that are Not Available
+```{r}
+stepsPerDay<-aggregate(myData$steps, by=list(myData$date), FUN=sum,na.rm=TRUE)
+```
+Rename columns
+```{r}
+names(stepsPerDay) <- c("date", "sumSteps")
+head(stepsPerDay)
+mean(stepsPerDay$sumSteps)
+```
 
 ## What is the average daily activity pattern?
 
