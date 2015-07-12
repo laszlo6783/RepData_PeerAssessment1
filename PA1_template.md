@@ -65,13 +65,34 @@ head(stepsPerDay)
 ```
 
 ```r
-mean(stepsPerDay$sumSteps)
+hist(stepsPerDay$sumSteps,xlab="steps", main="Total Steps in a day",breaks=10)
+meanStep<-mean(stepsPerDay$sumSteps)
+abline(v = meanStep, lwd = 2, lty = 2,col=2)
+medianStep<-median(stepsPerDay$sumSteps)
+abline(v = medianStep, lwd = 2, lty = 2,col=3)
+legend("topright", pch = "-", col = c("red", "green"), legend = c("mean", "median"))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+  
+Mean of the total steps
+
+```r
+meanStep
 ```
 
 ```
 ## [1] 9354.23
 ```
+Median of the total steps
 
+```r
+medianStep
+```
+
+```
+## [1] 10395
+```
 ## What is the average daily activity pattern?
 
 

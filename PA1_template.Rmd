@@ -31,9 +31,22 @@ Rename columns
 ```{r}
 names(stepsPerDay) <- c("date", "sumSteps")
 head(stepsPerDay)
-mean(stepsPerDay$sumSteps)
+hist(stepsPerDay$sumSteps,xlab="steps", main="Total Steps in a day",breaks=10)
+meanStep<-mean(stepsPerDay$sumSteps)
+abline(v = meanStep, lwd = 2, lty = 2,col=2)
+medianStep<-median(stepsPerDay$sumSteps)
+abline(v = medianStep, lwd = 2, lty = 2,col=3)
+legend("topright", pch = "-", col = c("red", "green"), legend = c("mean", "median"))
 ```
-
+  
+Mean of the total steps
+```{r}
+meanStep
+```
+Median of the total steps
+```{r}
+medianStep
+```
 ## What is the average daily activity pattern?
 
 
