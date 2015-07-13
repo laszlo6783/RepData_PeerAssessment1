@@ -140,7 +140,7 @@ We merge the NA data with the average data. The common field is "interval"
 ```r
 replacedData<-merge(myData[!goodData,],stepsOnTime)
 ```
-We delete the extra column with NA values
+We replace the NA values
 
 ```r
 replacedData$steps<-NULL
@@ -161,6 +161,15 @@ Now we recall the first diagram for the new dataset
 ```r
 stepsPerDay2<-aggregate(myData2$steps, by=list(myData2$date), FUN=sum,na.rm=TRUE)
 names(stepsPerDay2) <- c("date", "sumSteps")
+summary(stepsPerDay2$sumSteps)
+```
+
+```
+##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+##    41.0000  9819.0000 10766.1887 10766.1887 12811.0000 21194.0000
+```
+
+```r
 hist(stepsPerDay2$sumSteps,xlab="steps", main="Total Steps in a day",breaks=10)
 meanStep2<-mean(stepsPerDay2$sumSteps)
 abline(v = meanStep2, lwd = 2, lty = 2,col=2)
@@ -211,16 +220,11 @@ Plotting
 ```r
 stepsWeek<-aggregate(myData2$steps,by=list(myData2$interval,myData2$wd),FUN=mean,na.rm=TRUE)
 names(stepsWeek) <- c("interval", "wd","meanSteps")
-
-wdays<-subset(stepsWeek,wd=="weekdays")
-wend<-subset(stepsWeek,wd=="weekend")
-
-qplot(interval,meanSteps,data=stepsWeek,col=wd,geom="line")
+qplot(interval/100,meanSteps,data=stepsWeek,col=wd,geom="line",xlab="hours")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-19-1.png) 
 
-```r
-#with(wdays,plot(interval/100,meanSteps,type="l",xlab="hours",ylab="Means of steps",main="Means of Steps in 2 month interval"))
-#points(wend$interval,wend$meanSteps,col="red",type="l")
-```
+##Conclusions
+
+In the weekend, one gets up later and valks fewer in the morning (not going to work), but over day, it walks more, than weekdays.
