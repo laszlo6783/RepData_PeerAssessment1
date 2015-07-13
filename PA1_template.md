@@ -5,33 +5,22 @@
 
 
 ```r
+library(ggplot2)
+options(digits=12)
 unzip("activity.zip")
 myData<-read.csv("activity.csv",header=TRUE)
-head(myData)
+summary(myData)
 ```
 
 ```
-##   steps       date interval
-## 1    NA 2012-10-01        0
-## 2    NA 2012-10-01        5
-## 3    NA 2012-10-01       10
-## 4    NA 2012-10-01       15
-## 5    NA 2012-10-01       20
-## 6    NA 2012-10-01       25
-```
-
-```r
-tail(myData)
-```
-
-```
-##       steps       date interval
-## 17563    NA 2012-11-30     2330
-## 17564    NA 2012-11-30     2335
-## 17565    NA 2012-11-30     2340
-## 17566    NA 2012-11-30     2345
-## 17567    NA 2012-11-30     2350
-## 17568    NA 2012-11-30     2355
+##      steps                     date          interval      
+##  Min.   :  0.0000000   2012-10-01:  288   Min.   :   0.00  
+##  1st Qu.:  0.0000000   2012-10-02:  288   1st Qu.: 588.75  
+##  Median :  0.0000000   2012-10-03:  288   Median :1177.50  
+##  Mean   : 37.3825996   2012-10-04:  288   Mean   :1177.50  
+##  3rd Qu.: 12.0000000   2012-10-05:  288   3rd Qu.:1766.25  
+##  Max.   :806.0000000   2012-10-06:  288   Max.   :2355.00  
+##  NA's   :2304          (Other)   :15840
 ```
 
 ## What is mean total number of steps taken per day?
@@ -46,17 +35,12 @@ Rename columns
 
 ```r
 names(stepsPerDay) <- c("date", "sumSteps")
-head(stepsPerDay)
+summary(stepsPerDay$sumSteps)
 ```
 
 ```
-##         date sumSteps
-## 1 2012-10-01        0
-## 2 2012-10-02      126
-## 3 2012-10-03    11352
-## 4 2012-10-04    12116
-## 5 2012-10-05    13294
-## 6 2012-10-06    15420
+##        Min.     1st Qu.      Median        Mean     3rd Qu.        Max. 
+##     0.00000  6778.00000 10395.00000  9354.22951 12811.00000 21194.00000
 ```
 
 ```r
@@ -77,7 +61,7 @@ meanStep
 ```
 
 ```
-## [1] 9354.23
+## [1] 9354.2295082
 ```
 Median of the total steps
 
@@ -192,7 +176,7 @@ meanStep2
 ```
 
 ```
-## [1] 10766.19
+## [1] 10766.1886792
 ```
 
 ```r
@@ -200,7 +184,43 @@ medianStep2
 ```
 
 ```
-## [1] 10766.19
+## [1] 10766.1886792
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Introduct a new column "wd" and fill with "weekdays"
+
+```r
+namevector <- c("wd")
+myData2[,namevector] <- "weekdays"
+```
+Replace Saturdays and Sundays with "weekend"
+
+```r
+myData2[which(weekdays(as.Date(myData2$date,format="%Y-%m-%d"))=="Saturday", arr.ind=TRUE), 4] <- "weekend"
+myData2[which(weekdays(as.Date(myData2$date,format="%Y-%m-%d"))=="Sunday", arr.ind=TRUE), 4] <- "weekend"
+nrow(subset(myData2,wd=="weekend"))
+```
+
+```
+## [1] 4608
+```
+Plotting
+
+```r
+stepsWeek<-aggregate(myData2$steps,by=list(myData2$interval,myData2$wd),FUN=mean,na.rm=TRUE)
+names(stepsWeek) <- c("interval", "wd","meanSteps")
+
+wdays<-subset(stepsWeek,wd=="weekdays")
+wend<-subset(stepsWeek,wd=="weekend")
+
+qplot(interval,meanSteps,data=stepsWeek,col=wd,geom="line")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-19-1.png) 
+
+```r
+#with(wdays,plot(interval/100,meanSteps,type="l",xlab="hours",ylab="Means of steps",main="Means of Steps in 2 month interval"))
+#points(wend$interval,wend$meanSteps,col="red",type="l")
+```

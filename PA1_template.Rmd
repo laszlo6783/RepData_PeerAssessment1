@@ -9,10 +9,11 @@ output:
 ## Loading and preprocessing the data
 
 ```{r}
+library(ggplot2)
+options(digits=12)
 unzip("activity.zip")
 myData<-read.csv("activity.csv",header=TRUE)
-head(myData)
-tail(myData)
+summary(myData)
 ```
 
 ## What is mean total number of steps taken per day?
@@ -25,7 +26,7 @@ stepsPerDay<-aggregate(myData$steps, by=list(myData$date), FUN=sum,na.rm=TRUE)
 Rename columns
 ```{r}
 names(stepsPerDay) <- c("date", "sumSteps")
-head(stepsPerDay)
+summary(stepsPerDay$sumSteps)
 hist(stepsPerDay$sumSteps,xlab="steps", main="Total Steps in a day",breaks=10)
 meanStep<-mean(stepsPerDay$sumSteps)
 abline(v = meanStep, lwd = 2, lty = 2,col=2)
@@ -108,3 +109,22 @@ medianStep2
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Introduct a new column "wd" and fill with "weekdays"
+```{r}
+namevector <- c("wd")
+myData2[,namevector] <- "weekdays"
+```
+Replace Saturdays and Sundays with "weekend"
+```{r}
+myData2[which(weekdays(as.Date(myData2$date,format="%Y-%m-%d"))=="Saturday", arr.ind=TRUE), 4] <- "weekend"
+myData2[which(weekdays(as.Date(myData2$date,format="%Y-%m-%d"))=="Sunday", arr.ind=TRUE), 4] <- "weekend"
+nrow(subset(myData2,wd=="weekend"))
+```
+Plotting
+```{r}
+stepsWeek<-aggregate(myData2$steps,by=list(myData2$interval,myData2$wd),FUN=mean,na.rm=TRUE)
+names(stepsWeek) <- c("interval", "wd","meanSteps")
+
+qplot(interval,meanSteps,data=stepsWeek,col=wd,geom="line")
+```
