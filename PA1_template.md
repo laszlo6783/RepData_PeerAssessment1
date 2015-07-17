@@ -9,18 +9,17 @@ library(ggplot2)
 options(digits=12)
 unzip("activity.zip")
 myData<-read.csv("activity.csv",header=TRUE)
-summary(myData)
+head(myData)
 ```
 
 ```
-##      steps                     date          interval      
-##  Min.   :  0.0000000   2012-10-01:  288   Min.   :   0.00  
-##  1st Qu.:  0.0000000   2012-10-02:  288   1st Qu.: 588.75  
-##  Median :  0.0000000   2012-10-03:  288   Median :1177.50  
-##  Mean   : 37.3825996   2012-10-04:  288   Mean   :1177.50  
-##  3rd Qu.: 12.0000000   2012-10-05:  288   3rd Qu.:1766.25  
-##  Max.   :806.0000000   2012-10-06:  288   Max.   :2355.00  
-##  NA's   :2304          (Other)   :15840
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 ## What is mean total number of steps taken per day?
