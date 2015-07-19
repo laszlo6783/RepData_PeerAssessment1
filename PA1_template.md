@@ -8,7 +8,7 @@
 library(ggplot2)
 options(digits=12)
 unzip("activity.zip")
-myData<-read.csv("activity.csv",header=TRUE)
+myData<-read.csv("activity.csv", header = TRUE,colClasses = c("numeric","Date","numeric"))
 head(myData)
 ```
 
@@ -28,7 +28,8 @@ Summarize the steps by the date
 We exclude the values that are Not Available
 
 ```r
-stepsPerDay<-aggregate(myData$steps, by=list(myData$date), FUN=sum,na.rm=TRUE)
+goodData<-complete.cases(myData$steps)
+stepsPerDay<-aggregate(myData[goodData,]$steps, by=list(myData[goodData,]$date), FUN=sum,na.rm=TRUE)
 ```
 Rename columns
 
@@ -38,8 +39,8 @@ summary(stepsPerDay$sumSteps)
 ```
 
 ```
-##        Min.     1st Qu.      Median        Mean     3rd Qu.        Max. 
-##     0.00000  6778.00000 10395.00000  9354.22951 12811.00000 21194.00000
+##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+##    41.0000  8841.0000 10765.0000 10766.1887 13294.0000 21194.0000
 ```
 
 ```r
@@ -60,7 +61,7 @@ meanStep
 ```
 
 ```
-## [1] 9354.2295082
+## [1] 10766.1886792
 ```
 Median of the total steps
 
@@ -69,20 +70,20 @@ medianStep
 ```
 
 ```
-## [1] 10395
+## [1] 10765
 ```
 ## What is the average daily activity pattern?
 
 
 ```r
-stepsOnTime<-aggregate(myData$steps,by=list(myData$interval),FUN=mean,na.rm=TRUE)
+stepsOnTime<-aggregate(myData[goodData,]$steps,by=list(myData[goodData,]$interval),FUN=mean,na.rm=TRUE)
 names(stepsOnTime) <- c("interval", "meanSteps")
 str(stepsOnTime)
 ```
 
 ```
 ## 'data.frame':	288 obs. of  2 variables:
-##  $ interval : int  0 5 10 15 20 25 30 35 40 45 ...
+##  $ interval : num  0 5 10 15 20 25 30 35 40 45 ...
 ##  $ meanSteps: num  1.717 0.3396 0.1321 0.1509 0.0755 ...
 ```
 
@@ -113,10 +114,6 @@ maxInt/100
 ```
 ## Imputing missing values
 
-
-```r
-goodData<-complete.cases(myData$steps)
-```
 Number of rows NA
 
 ```r
@@ -177,7 +174,7 @@ abline(v = medianStep2, lwd = 2, lty = 2,col=3)
 legend("topright", pch = "-", col = c("red", "green"), legend = c("mean", "median"))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-16-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png) 
 
 ```r
 meanStep2
@@ -222,7 +219,7 @@ names(stepsWeek) <- c("interval", "wd","meanSteps")
 qplot(interval/100,meanSteps,data=stepsWeek,col=wd,geom="line",xlab="hours")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-19-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-18-1.png) 
 
 ##Conclusions
 

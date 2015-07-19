@@ -12,7 +12,7 @@ output:
 library(ggplot2)
 options(digits=12)
 unzip("activity.zip")
-myData<-read.csv("activity.csv",header=TRUE)
+myData<-read.csv("activity.csv", header = TRUE,colClasses = c("numeric","Date","numeric"))
 head(myData)
 ```
 
@@ -21,7 +21,8 @@ head(myData)
 Summarize the steps by the date  
 We exclude the values that are Not Available
 ```{r}
-stepsPerDay<-aggregate(myData$steps, by=list(myData$date), FUN=sum,na.rm=TRUE)
+goodData<-complete.cases(myData$steps)
+stepsPerDay<-aggregate(myData[goodData,]$steps, by=list(myData[goodData,]$date), FUN=sum,na.rm=TRUE)
 ```
 Rename columns
 ```{r}
@@ -46,7 +47,7 @@ medianStep
 ## What is the average daily activity pattern?
 
 ```{r}
-stepsOnTime<-aggregate(myData$steps,by=list(myData$interval),FUN=mean,na.rm=TRUE)
+stepsOnTime<-aggregate(myData[goodData,]$steps,by=list(myData[goodData,]$interval),FUN=mean,na.rm=TRUE)
 names(stepsOnTime) <- c("interval", "meanSteps")
 str(stepsOnTime)
 with(stepsOnTime,plot(interval/100,meanSteps,type="l",xlab="hours",ylab="Means of steps",main="Means of Steps in 2 month interval"))
@@ -63,9 +64,6 @@ maxInt/100
 ```
 ## Imputing missing values
 
-```{r}
-goodData<-complete.cases(myData$steps)
-```
 Number of rows NA
 ```{r}
 nrow(myData[!goodData,])
